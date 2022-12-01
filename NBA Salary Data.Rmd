@@ -1,0 +1,117 @@
+---
+title: "Salary NBA Data"
+author: "Nathan Mehta"
+date: "4/26/2022"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+## NBA players data - How Factors affect salary
+```{r}
+dat<-read.csv("Downloads/nba2018-players.csv")
+```
+```{r}
+#dat
+```
+
+```{r}
+#names(dat)
+```
+## 1
+a)
+```{r}
+dat%>%filter(height<70)
+```
+b)
+```{r}
+dat%>%filter(team == "GSW" & position == "C")
+```
+c)
+```{r}
+dat%>%filter(experience > 10 & salary >= 15000000) %>% select(c("player","age","team"))
+```
+d)
+```{r}
+dat%>%filter(experience == 0 & age == 20) %>% select(c("player","team","height","weight")) %>% arrange(desc(height)) %>% slice_head(n = 5)
+```
+
+e)
+```{r}
+dat%>%arrange(desc(salary/minutes))%>% select(c("player","points"))%>%slice_head(n=5)
+```
+f)
+```{r}
+gsw_mpg<-dat%>%filter(team == "GSW")%>%mutate(min_per_game = minutes/games)%>%select(c("player","experience","min_per_game"))%>%arrange(desc(min_per_game))
+gsw_mpg
+```
+g)
+```{r}
+dat%>%group_by(position)%>% summarise(pos_avg_pts = mean(points), pos_std_pts= sd(points))
+```
+
+h) 
+```{r}
+dat%>%group_by(team)%>%summarise(med_of_team = median(points))
+```
+i)
+```{r}
+dat%>%group_by(team)%>%mutate(sum_of_team = sum(points)) %>%ungroup()%>%mutate(percentage_of_team_pts = points / sum_of_team)%>%arrange(desc(percentage_of_team_pts))%>%slice_head(n=5)%>%select(c("player","salary"))
+
+```
+
+
+## 3
+
+a)
+```{r}
+ggplot(data = dat%>%filter(team == "GSW"), aes(x = height, y = weight)) +
+geom_point() + geom_text(size=2, aes(label=player), nudge_y = .5)
+```
+
+b)
+```{r}
+ggplot(data = dat, aes(x = salary)) +
+geom_density()
+```
+
+c)
+```{r}
+ggplot(data = dat, aes(x = points2)) +
+geom_histogram(binwidth = 50)
+```
+
+d)
+```{r}
+ggplot(data = dat%>%filter(position == "C"), aes(x = experience, y = salary)) +
+geom_point() +
+geom_smooth(method = 'lm')
+```
+
+e)
+```{r}
+ggplot(data = dat, aes(x=age)) + geom_density() +
+facet_wrap(~ team)
+```
+
+f) 
+```{r}
+ggplot(data = dat, aes(x = height, y = weight)) +
+geom_point() +
+facet_wrap(~ position)
+```
+g)
+```{r}
+ggplot(data = dat, aes(x = points, y = salary, color = position)) +
+geom_point() +
+facet_wrap(. ~ position)
+```
+
