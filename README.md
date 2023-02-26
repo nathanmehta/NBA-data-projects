@@ -1,4 +1,4 @@
-# NBA-salary-data
+# NBA-data
 Working with NBA data to create visualizations that demonstrate how various factors affect salary
 
 # College BB Notebook 
